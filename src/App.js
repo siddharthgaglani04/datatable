@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import DataTable from './DataTable';
+import './App.css'
 
-function App() {
+const App = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // Fetch data from an external source (e.g., CSV/JSON file)
+    // Update the state with the fetched data
+    fetchData().then((fetchedData) => setData(fetchedData));
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  const columns = [
+    { key: 'id', label: 'ID', filterable: true },
+    { key: 'title', label: 'Title', filterable: true },
+    { key: 'body', label: 'Body' }
+  ];
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <DataTable data={data} columns={columns} />
     </div>
   );
-}
+};
 
 export default App;
